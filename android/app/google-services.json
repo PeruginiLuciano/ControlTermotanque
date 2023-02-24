@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1028420292905",
+    "project_id": "domotikapp-b7876",
+    "storage_bucket": "domotikapp-b7876.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028420292905:android:43323a468f76f8f7b9a738",
+        "android_client_info": {
+          "package_name": "com.example.prueba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028420292905-49m9abu27glpb8f7ipcgdtsmpe0lqieu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC3YtjoY34hdSzYMqWUgWZ7Fm1XT9K0yY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028420292905-49m9abu27glpb8f7ipcgdtsmpe0lqieu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
