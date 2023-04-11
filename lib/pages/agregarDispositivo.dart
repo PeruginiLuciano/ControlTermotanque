@@ -41,10 +41,14 @@ final firebaseRealtime = FirebaseDatabase.instance.ref();
 Future<void> agregarD(dynamic _nombre,dynamic _codigo, String _fecha,String _fechaCambio,context) async {
   String temp="";
   try{
+    
   if(_codigo.text.length==12){
    
     try{
-        
+        await FirebaseFirestore.instance.collection('Usuarios').doc(user.uid.toString()+"/Dispositivos/Disp").set({
+          "Fecha" : _nombre.text.trim(),
+          "FechaCambio": _codigo.text.trim()
+        });
         firebaseRealtime.child(_codigo.text.trim()).child("Anodo").set({
         "Fecha" : _fecha,
         "FechaCambio": _fechaCambio
