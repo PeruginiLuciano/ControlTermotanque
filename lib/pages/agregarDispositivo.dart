@@ -38,6 +38,36 @@ void agregarDispositivos() async {
 
 final user = FirebaseAuth.instance.currentUser!;
 final firebaseRealtime = FirebaseDatabase.instance.ref();
+
+Future<void> agregarD2(dynamic _nombre,dynamic _codigo,String _fecha,String _fechaCambio,context) async{
+if(_codigo.text.length==12){
+  firebaseRealtime.child(_codigo.text.trim()).child("Anodo").set({
+        "Fecha" : _fecha,
+        "FechaCambio": _fechaCambio
+        });
+
+
+
+
+
+  
+  final CollectionReference dispCollection = FirebaseFirestore.instance.collection(user.email.toString());
+            return dispCollection.doc(_nombre.text.trim()).set(
+            {
+              "Nombre": _nombre.text.trim(),
+              "Codigo": _codigo.text.trim(),
+
+            }
+          );
+          
+}else{Fluttertoast.showToast(
+                    msg: "Error el codigo debe ser de 12 digitos",
+                    toastLength: Toast.LENGTH_SHORT,
+                    timeInSecForIosWeb: 1,
+                    textColor: Colors.white,
+                    fontSize: 16.0);}
+}
+
 Future<void> agregarD(dynamic _nombre,dynamic _codigo, String _fecha,String _fechaCambio,context) async {
   String temp="";
   try{
@@ -45,10 +75,11 @@ Future<void> agregarD(dynamic _nombre,dynamic _codigo, String _fecha,String _fec
   if(_codigo.text.length==12){
    
     try{
-        await FirebaseFirestore.instance.collection('Usuarios').doc(user.uid.toString()+"/Dispositivos/Disp").set({
-          "Fecha" : _nombre.text.trim(),
-          "FechaCambio": _codigo.text.trim()
-        });
+        //await FirebaseFirestore.instance.collection('Usuarios').doc(user.uid.toString()+"/Dispositivos/Disp").set({
+          //"Fecha" : _nombre.text.trim(),
+          //"FechaCambio": _codigo.text.trim()
+        //});
+        
         firebaseRealtime.child(_codigo.text.trim()).child("Anodo").set({
         "Fecha" : _fecha,
         "FechaCambio": _fechaCambio
@@ -247,7 +278,9 @@ class _agregarDispState extends State<agregarDisp> {
               onTap:() { 
                  if(PrintFech.length>0){
                 print("Se agrego");
-                agregarD(_nombre,_codigo,PrintFech,PrintFechCambio,context);
+                //agregarD(_nombre,_codigo,PrintFech,PrintFechCambio,context);
+                agregarD2(_nombre,_codigo,PrintFech,PrintFechCambio,context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(0)));
                  }
                  else{Fluttertoast.showToast(
                       msg: "Debe introducir fecha de cambio de anodo para agregar dispositivo",

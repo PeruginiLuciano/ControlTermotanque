@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -24,28 +25,46 @@ class _controlState extends State<control> with SingleTickerProviderStateMixin {
   late Animation<num> tempAnomations;
   late Animation<num> tempMAx;
   late Animation<num> tempMin;
-  List<Dispositivos> disp = [];
+  final List<String> disp = [];
+  final List<String> Nombres = [];
+  Future<void> _loadName() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final CollectionReference dispCollection = FirebaseFirestore.instance.collection(user.email.toString());
+    
+    final querySnapshot = await dispCollection.get();
+    querySnapshot.docs.forEach((document) {
+      final data = document.data() as Map<String, dynamic>;
+      final codigo = data['Nombre'] as String;
+      final codigo2 = data['Codigo'] as String;
+      Nombres.add(codigo);
+      disp.add(codigo2);
+    });
+    
+  }
   int j = 0;
   @override
   void initState() {
-    cargaAnimales();
+    
     super.initState();
+    _loadName().then((_) {
+      cargaAnimales();
+    });
   }
 
   cargaAnimales() async {
-    List<Dispositivos> auxAnimal = await DisDataBase.dispositovo();
+    //List<Dispositivos> auxAnimal = await DisDataBase.dispositovo();
 
     setState(() {
-      for (var i = 0; i < auxAnimal.length; i++) {
+      /*for (var i = 0; i < auxAnimal.length; i++) {
         if (auxAnimal[i].Email.toString() == user.email.toString()) {
           disp.insert(j, auxAnimal[i]);
           j++;
         }
       }
-      j = 0;
+      j = 0;*/
       try {
         databaseReference
-            .child(disp[widget.index].Codigo.toString() + "/Sensores")
+            .child(disp[widget.index] + "/Sensores")
             .once()
             .then((event) {
           num tem = (event.snapshot.value as Map)["Temperatura"];

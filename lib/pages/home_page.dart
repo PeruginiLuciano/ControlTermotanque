@@ -33,29 +33,63 @@ class _HomePageState extends State<HomePage>
   int bandera=0;
   bool isInitialLoad = true;
   final dbTemp = FirebaseDatabase.instance.ref().child('Dispositivo6').onValue;
-
+  
   final user = FirebaseAuth.instance.currentUser!;
+  
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
   num nivelAgua=40;
   final databaseReference = FirebaseDatabase.instance.ref();
+  
   late num tem;
   late AnimationController progressController;
   late Animation<num> tempAnomations;
   late Animation<double> Humedad;
   int j = 0;
-  List<Dispositivos> disp = [];
+  final List<String> disp = [];
+  final List<String> Nombres = [];
+  Future<void> _loadName() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final CollectionReference dispCollection = FirebaseFirestore.instance.collection(user.email.toString());
+    
+    final querySnapshot = await dispCollection.get();
+    querySnapshot.docs.forEach((document) {
+      final data = document.data() as Map<String, dynamic>;
+      final codigo = data['Nombre'] as String;
+      final codigo2 = data['Codigo'] as String;
+      Nombres.add(codigo);
+      disp.add(codigo2);
+    });
+    
+  }
+  /*Future<void> _loadUsers(List<String> disp) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final CollectionReference dispCollection = FirebaseFirestore.instance.collection(user.email.toString());
+     disp= [];
+    QuerySnapshot querySnapshot = await dispCollection.get();
+    final AllDataa=querySnapshot.docs.map((doc) => doc.data()).toList();
+    print(AllDataa);
+    disp.add((AllDataa as Map )["Codigo"]);
+    
+  }*/
+  //List<Dispositivos> disp = [];
   @override
   void initState() {
-    cargaAnimales();
+    
+    
     super.initState();
+    //_loadUsers(disp);
+    _loadName().then((_) {
     bandera++;
     if(bandera>1){
       isInitialLoad = false;
 
     }
     else{isInitialLoad = true;}
-      
+    cargaAnimales();
+    }).catchError((error){
+      print("ERROR es: $error");
+    })   ;
   }
   @override
   
@@ -65,22 +99,22 @@ class _HomePageState extends State<HomePage>
     
   }
   cargaAnimales() async {
-    List<Dispositivos> auxAnimal = await DisDataBase.dispositovo();
+    //List<Dispositivos> auxAnimal = await DisDataBase.dispositovo();
 
     setState(() {
      
-        for (var i = 0; i < auxAnimal.length; i++) {
+       /* for (var i = 0; i < auxAnimal.length; i++) {
           if (auxAnimal[i].Email.toString() == user.email.toString()) {
             disp.insert(j, auxAnimal[i]);
             j++;
           }
-        }
+        }*/
       
       try {
         if (disp.length > 0) {
           comenzar = true;
-          final path = disp[widget.index].Codigo.toString() + "/Sensores";
-          final path2 = disp[widget.index].Codigo.toString()+"/Nivel";
+          final path = disp[widget.index] + "/Sensores";
+          final path2 = disp[widget.index]+"/Nivel";
           databaseReference.child(path).onValue.listen((event) {
              tem=(event.snapshot.value as Map)["Temperatura"];
               _DashboardInit(tem, 2.0);
@@ -163,7 +197,7 @@ class _HomePageState extends State<HomePage>
               drawer: NavBar(widget.index),
               appBar: AppBar(
                 backgroundColor: Colors.green,
-                title: Text(disp[widget.index].Nombre.toString(),
+                title: Text(Nombres[widget.index],
                     style: TextStyle(fontSize: 20)),
                 actions: [
                   GestureDetector(

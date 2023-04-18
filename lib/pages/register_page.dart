@@ -64,13 +64,13 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future addUserDetails(String nombre, String apellido, String email, int edad ) async{
-    await FirebaseFirestore.instance.collection('Usuarios').add({
+    await FirebaseFirestore.instance.collection('Usuarios').doc(email.toString()).set({
       'Nombre':nombre,
       'Apellido':apellido,
       
       'Email':email,
       'Edad':edad,
-      'Temperatura': 0,
+      
 
     });
   }

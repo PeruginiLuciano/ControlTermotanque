@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,20 +23,34 @@ class _mensualState extends State<mensual> {
   @override
   final databaseReference = FirebaseDatabase.instance.ref();
   final user = FirebaseAuth.instance.currentUser!;
-  List<Dispositivos> disp = [];
+  final List<String> disp = [];
+  final List<String> Nombres = [];
+  Future<void> _loadName() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final CollectionReference dispCollection = FirebaseFirestore.instance.collection(user.email.toString());
+    
+    final querySnapshot = await dispCollection.get();
+    querySnapshot.docs.forEach((document) {
+      final data = document.data() as Map<String, dynamic>;
+      final codigo = data['Nombre'] as String;
+      final codigo2 = data['Codigo'] as String;
+      Nombres.add(codigo);
+      disp.add(codigo2);
+    });
+    
+  }
+
+  void initState() {
+    
+    super.initState();
+    _loadName().then((_) {
+      
+    });
+  }
   late Stream<dynamic> Prom2;
   bool isLoading=true;
   int j = 0;
-  void carga() async {
-    List<Dispositivos> auxAnimal = await DisDataBase.dispositovo();
-    for (var i = 0; i < auxAnimal.length; i++) {
-      if (auxAnimal[i].Email.toString() == user.email.toString()) {
-        disp.insert(j, auxAnimal[i]);
-        j++;
-      }
-    }
-    j = 0;
-  }
+ 
 
   var _currentSelectdData;
   var _currentSelectdDataFinal;
@@ -75,7 +90,7 @@ class _mensualState extends State<mensual> {
           }
           fecha = Ano + "-" + Mes + "-" + Dias;
           await databaseReference
-              .child(disp[widget.index].Codigo.toString() + "/Fecha/" + fecha)
+              .child(disp[widget.index] + "/Fecha/" + fecha)
               .once()
               .then((event) {
                 num  Temp2=     (event.snapshot.value as Map)["TemperaturaMax"];
@@ -150,7 +165,7 @@ class _mensualState extends State<mensual> {
           }
           fecha = Ano + "-" + Mes + "-" + Dias;
           await databaseReference
-              .child(disp[widget.index].Codigo.toString() + "/Fecha/" + fecha)
+              .child(disp[widget.index]+ "/Fecha/" + fecha)
               .once()
               .then((event) {
                 num  Temp=     (event.snapshot.value as Map)["TemperaturaMax"];
@@ -223,7 +238,7 @@ class _mensualState extends State<mensual> {
           }
           fecha = Ano + "-" + Mes + "-" + Dias;
           await databaseReference
-              .child(disp[widget.index].Codigo.toString() + "/Fecha/" + fecha)
+              .child(disp[widget.index] + "/Fecha/" + fecha)
               .once()
               .then((event) {
                 num  Temp=     (event.snapshot.value as Map)["TemperaturaMin"];
@@ -286,6 +301,7 @@ class _mensualState extends State<mensual> {
         _currentSelectdData.day.toString();
     */
     setState(() {
+      _loadName().then((_){
       _currentSelectdData = selectedDate;
       Ano1 = int.parse(_currentSelectdData.year.toString());
       mes1 = int.parse(_currentSelectdData.month.toString());
@@ -296,6 +312,7 @@ class _mensualState extends State<mensual> {
           "-" +
           _currentSelectdData.day.toString();
     });
+    });
   }
  
   void callDatePicker2() async {
@@ -303,6 +320,7 @@ class _mensualState extends State<mensual> {
     var selectedDate = await getDatePickerWidget2();
 
     setState(() {
+      _loadName().then((_){
       _currentSelectdDataFinal = selectedDate;
       Ano2 = int.parse(_currentSelectdDataFinal.year.toString());
       mes2 = int.parse(_currentSelectdDataFinal.month.toString());
@@ -312,6 +330,7 @@ class _mensualState extends State<mensual> {
           _currentSelectdDataFinal.month.toString() +
           "-" +
           _currentSelectdDataFinal.day.toString();
+      });
     });
   }
 
@@ -373,7 +392,7 @@ class _mensualState extends State<mensual> {
                     fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                carga();
+                
                 callDatePicker();
               },
             ),
@@ -388,7 +407,7 @@ class _mensualState extends State<mensual> {
                     fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                carga();
+                
                 callDatePicker2();
               },
             ),
@@ -512,7 +531,7 @@ class _mensualState extends State<mensual> {
                     fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                carga();
+                
                 callDatePicker();
               },
             ),
@@ -527,7 +546,7 @@ class _mensualState extends State<mensual> {
                     fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                carga();
+                
                 callDatePicker2();
               },
             ),

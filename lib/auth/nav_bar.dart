@@ -7,6 +7,8 @@ import 'package:firebase_database/ui/firebase_sorted_list.dart';
 import 'package:flutter/material.dart';
 import 'package:prueba/data_base/temperaturas.dart';
 import 'package:prueba/pages/dispo_sitivos.dart';
+import 'package:prueba/pages/dispositivos.dart';
+import 'package:prueba/pages/dispositivosFirebase.dart';
 import 'package:prueba/pages/home_page.dart';
 import 'package:prueba/pages/pruebas.dart';
 import 'package:prueba/pages/relay.dart';
@@ -102,7 +104,7 @@ class NavBar extends StatelessWidget {
             title: Text("Dispositivos"),
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => (Listado())));
+                  MaterialPageRoute(builder: (context) => (UserListScreen())));
             },
           ),
           ListTile(
